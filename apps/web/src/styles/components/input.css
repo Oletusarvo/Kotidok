@@ -1,0 +1,19 @@
+.input {
+  outline: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
+
+.input.--success {
+  background-color: var(--color-green-100);
+  border-color: var(--color-green-300);
+}
+
+.input::placeholder {
+  font-size: var(--text-sm);
+}

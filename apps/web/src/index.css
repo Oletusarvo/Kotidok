@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+@import './styles/main.css';
+
+body {
+  background-color: var(--color-slate-50);
+}
+
+body,
+#root {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  flex-grow: 0;
+}
+
+#root * {
+  box-sizing: border-box;
+  display: flex;
+}

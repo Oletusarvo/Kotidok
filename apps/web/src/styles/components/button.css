@@ -1,0 +1,52 @@
+.button {
+  cursor: pointer;
+  transition: transform 0.1s ease-out;
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease-out;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.button.--contained.--primary:disabled {
+  background-color: var(--color-slate-500);
+  color: white;
+}
+
+.button.--outlined.--primary:disabled {
+  border-color: var(--color-slate-500);
+  color: var(--color-slate-500);
+}
+
+.button.--contained.--primary {
+  border: transparent;
+  color: white;
+  background-color: var(--color-primary);
+}
+
+.button.--outlined {
+  background-color: transparent;
+}
+
+.button.--outlined.--primary {
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.button.--outlined.--white {
+  border: 1px solid white;
+  color: white;
+}
+
+.button.--ghost {
+  background-color: transparent;
+}
+
+.button.--ghost:hover {
+  background-color: color-mix(in oklab, white 10%, transparent);
+}

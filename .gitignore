@@ -4,3 +4,4 @@ mock-data
 seeds
 sketch.md
 dist
+.env

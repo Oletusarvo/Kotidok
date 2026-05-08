@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "description": "Kotidok is an application for modeling and documenting the lifecycle of properties.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "web:dev": "npm run dev -w @kotidok/web",
+    "server:dev": "npm run start:dev -w @kotidok/server",
+    "server:build:dev": "npm run build:dev -w @kotidok/server"
   },
   "keywords": [],
   "author": "",

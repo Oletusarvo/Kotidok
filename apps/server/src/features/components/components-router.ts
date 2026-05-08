@@ -7,6 +7,7 @@ import { getComponentChildrenByIdHandler } from './handlers/get-component-childr
 import { getComponentEventsByIdHandler } from './handlers/get-component-events-by-id-handler';
 import { getComponentRolesByIdHandler } from './handlers/get-component-roles-by-id-handler';
 import { createComponentHandler } from './handlers/create-component-handler';
+import { getComponentTransactionsByIdHandler } from './handlers/get-component-transactions-by-id-handler';
 
 const router = getRouter();
 
@@ -14,6 +15,7 @@ router.get('/:id', getComponentByIdHandler);
 router.get('/:id/children', getComponentChildrenByIdHandler);
 router.get('/:id/events', getComponentEventsByIdHandler);
 router.get('/:id/roles', getComponentRolesByIdHandler);
+router.get('/:id/transactions', getComponentTransactionsByIdHandler);
 
 router.post('/', checkAuth(), createBodyParser(componentSchema), createComponentHandler);
 export { router as componentsRouter };

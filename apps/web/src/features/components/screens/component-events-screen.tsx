@@ -1,16 +1,13 @@
-import { Plus } from 'lucide-react';
-import { AppScreen, AppSubScreen } from '../../../components/app-screen';
-import { Button } from '../../../components/button';
-import { SearchBar } from '../../../components/searchbar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiInterface } from '../../../utils/api-interface';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '../../../components/spinner';
-import { ComponentCard } from '../components/component-card';
 import { useState } from 'react';
 import { debounce } from '../../../utils/debounce';
 import { SearchableList } from '../../../components/searchable-list';
 import { EventCard } from '../components/event-card';
+import { ErrorScreen } from '../../../screens/error-screen';
+import { History } from 'lucide-react';
 
 export function ComponentEventsScreen() {
   const { id } = useParams();
@@ -25,7 +22,7 @@ export function ComponentEventsScreen() {
     <SearchableList
       searchPlaceholder='Etsi tapahtumaa nimellä...'
       onSearch={runSearch}
-      onAddNew={() => navigate('/auth/events/create')}>
+      onAddNew={() => navigate('/auth/events/create?parent_id=')}>
       {isLoading ? (
         <div className='flex-col items-center justify-center flex-1'>
           <Spinner />
@@ -39,7 +36,10 @@ export function ComponentEventsScreen() {
           />
         ))
       ) : (
-        <span>Ei tapahtumia.</span>
+        <ErrorScreen
+          title='Ei Tapahtumia'
+          icon={<History />}
+        />
       )}
     </SearchableList>
   );
@@ -49,7 +49,7 @@ function useComponentEvents(componentId: string, title?: string) {
   const { data: events, isLoading } = useQuery({
     queryKey: ['component', componentId, 'events', title],
     queryFn: async () => {
-      const res = await apiInterface.getComponentEvents(componentId, title);
+      const res = await apiInterface.getComponentTransactions(componentId, title);
       return res.status === 200 ? await res.json() : [];
     },
   });

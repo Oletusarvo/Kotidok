@@ -10,7 +10,9 @@ import {
 } from './screens/error-screen';
 import { ComponentChildrenScreen } from './features/components/screens/component-children-screen';
 import { PropertyListScreen } from './features/properties/screens/property-list-screen';
-import { ComponentEventsScreen } from './features/components/screens/component-events.screen';
+import { ComponentEventsScreen } from './features/components/screens/component-events-screen';
+import { ComponentMetadataScreen } from './features/components/screens/component-metadata-screen';
+import { EditComponentScreen } from './features/components/screens/edit-component-screen';
 
 export function AppRoutes() {
   return (
@@ -62,6 +64,14 @@ export function AppRoutes() {
             <Route
               path='files'
               element={<NotImplementedScreen title='Component files' />}
+            />
+            <Route
+              path='details'
+              element={<ComponentMetadataScreen />}
+            />
+            <Route
+              path='edit'
+              element={<EditComponentScreen />}
             />
           </Route>
         </Route>

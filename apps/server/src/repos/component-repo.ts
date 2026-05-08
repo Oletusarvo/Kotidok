@@ -147,6 +147,37 @@ export class ComponentRepo extends Repo {
       .join(db.raw('?? AS ed ON ed.id = etd.event_id', [tablenames.event_data]))
       .groupBy('ed.id');
   }
+
+  /**Returns all transactions performed on a component by id. */
+  getTransactionsById(componentId: string, ctx: DBContext) {
+    return ctx
+      .withRecursive('child_tree', cte => {
+        cte
+          .select('*')
+          .from(views.component)
+          .where({ id: componentId })
+          .unionAll(u => {
+            u.select('c.*')
+              .from({ c: views.component })
+              .join('child_tree AS ct', 'ct.id', 'c.parent_id');
+          });
+      })
+      .from({ t: tablenames.event_transaction_data })
+      .join('child_tree AS ct', 'ct.id', 't.component_id')
+      .join(db.raw('?? AS tt ON tt.id = t.transaction_type_id', [tablenames.transaction_type]))
+      .select(
+        'tt.label as transaction_type',
+        't.created_at',
+        't.effective_at',
+        db.raw(
+          `(SELECT JSON_BUILD_OBJECT('id', e.id, 'title', e.title) FROM ?? e WHERE e.id = t.event_id) AS event`,
+          [tablenames.event_data],
+        ),
+        db.raw(
+          `JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name, 'type', ct.component_type) AS "component"`,
+        ),
+      );
+  }
 }
 
 export const componentRepo = new ComponentRepo();

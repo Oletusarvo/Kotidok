@@ -15,9 +15,9 @@ export type AppScreenProps = React.PropsWithChildren & { subScreen?: boolean } &
       }
   );
 
-export function AppScreen({ children, onClose, title, headerShown }: AppScreenProps) {
+export function AppScreen({ children, onClose, title, headerShown, subScreen }: AppScreenProps) {
   const containerClassName = useClassName(
-    'flex-col animate-app-screen w-full bg-slate-50 grow-0 absolute top-0 left-0',
+    'flex-col animate-app-screen w-full bg-slate-50 grow-0 absolute top-0 left-0 h-full',
   );
 
   return (

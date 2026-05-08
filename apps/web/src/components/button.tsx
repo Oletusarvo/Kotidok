@@ -8,12 +8,14 @@ export type ButtonProps = React.ComponentProps<'button'> & {
   shadow?: boolean;
   fullWidth?: boolean;
   rounded?: boolean;
+  borderStyle?: 'dashed' | 'solid';
 };
 
 export function Button({
   children,
   variant = 'contained',
   color = 'primary',
+  borderStyle = 'solid',
   compact,
   rounded,
   shadow,
@@ -23,6 +25,7 @@ export function Button({
   const className = useClassName(
     'button items-center gap-2',
     `--${variant} --${color}`,
+    borderStyle === 'dashed' ? 'border-dashed' : 'border-solid',
     shadow ? 'shadow-md' : '',
     fullWidth ? 'w-full' : '',
     rounded

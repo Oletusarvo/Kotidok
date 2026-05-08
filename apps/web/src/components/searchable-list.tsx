@@ -17,7 +17,7 @@ export function SearchableList({
   searchDisabled,
 }: SearchableListProps) {
   return (
-    <div className='flex-col gap-2 animate-app-screen p-2 overflow-hidden'>
+    <div className='flex-col gap-2 animate-app-screen p-2 overflow-hidden flex-1'>
       <div className='w-full gap-2'>
         <SearchBar
           disabled={searchDisabled}

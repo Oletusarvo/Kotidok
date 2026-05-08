@@ -3,13 +3,15 @@ import { AppScreen } from '../../../components/app-screen';
 import { useQuery } from '@tanstack/react-query';
 import { apiInterface } from '../../../utils/api-interface';
 import { Spinner } from '../../../components/spinner';
-import { ArrowLeft, Box, CircleQuestionMark } from 'lucide-react';
+import { ArrowLeft, Box, CircleQuestionMark, Info, Pencil } from 'lucide-react';
 import { Button, TabButton } from '../../../components/button';
 import { componentIconMap } from '../../../utils/component-icon-map';
 import { PassProps } from '../../../components/pass-props';
 import { ErrorScreen, ErrorScreenWithReturn } from '../../../screens/error-screen';
-import { componentTypeNameMap } from '../../../utils/component-type-name-map';
+import { componentTypeNameMap } from '../../../utils/name-maps/component-type-name-map';
 import { ComponentType } from '@kotidok/types';
+import { ComponentProvider } from '../providers/component-provider';
+import { useClassName } from '../../../hooks/use-class-name';
 
 export function ComponentScreen() {
   const { id } = useParams();
@@ -18,7 +20,14 @@ export function ComponentScreen() {
     throw new Error('The component screen must have access to an id url-parameter!');
   }
 
-  const { component, isLoading } = useComponent(id);
+  const { component, isLoading } = useComponentScreen(id);
+  const statusBadgeClassName = useClassName(
+    'text-xs font-semibold py-1 px-2 border rounded-md',
+    !component?.is_active
+      ? 'bg-red-500/20 border-red-500/40 text-red-200'
+      : 'bg-green-500/20 border-green-500/40 text-green-200',
+  );
+
   if (isLoading) {
     return (
       <div className='flex-col w-full flex-1 justify-center items-center'>
@@ -59,12 +68,13 @@ export function ComponentScreen() {
                 if (component.component_type === ComponentType.PROPERTY) {
                   navigate('/auth/properties');
                 } else {
-                  navigate(`/auth/components/${component.parent_id}/events`);
+                  navigate(`/auth/components/${component.parent_id}/children`);
                 }
               }}>
               <ArrowLeft color='white' />
             </Button>
-            <div className='rounded-[100px] border border-white py-2 px-4 items-center'>
+
+            <div className='rounded-[100px] border border-white/20 bg-white/10 py-2 px-4 items-center'>
               <span className='text-sm font-semibold text-white'>
                 {componentTypeNameMap[
                   component.component_type as keyof typeof componentTypeNameMap
@@ -72,16 +82,39 @@ export function ComponentScreen() {
               </span>
             </div>
           </div>
+          <div className='w-full flex-row justify-between items-end'>
+            <div className='flex-col items-start'>
+              <div className='flex-row items-center gap-2'>
+                <span className='text-lg text-white font-semibold overflow-hidden text-ellipsis'>
+                  {component.name}
+                </span>
+                <span className={statusBadgeClassName}>
+                  {component.is_active ? 'Aktiivinen' : 'Ei Aktiivinen'}
+                </span>
+              </div>
 
-          <div className='flex-col'>
-            <span className='text-lg text-white font-semibold'>{component.name}</span>
-            <span className='text-xs font-mono text-white'>{component.id}</span>
+              <span className='text-xs font-mono text-white'>{component.id}</span>
+            </div>
+            <div className='flex-row gap-2 items-center'>
+              <Button
+                variant='ghost'
+                onClick={() => navigate('edit')}
+                rounded>
+                <Pencil color='white' />
+              </Button>
+              <Button
+                onClick={() => navigate('details')}
+                variant='ghost'
+                rounded>
+                <Info color='white' />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className='w-full bg-olive-100 justify-start flex-col flex-3 gap-2 overflow-hidden relative'>
-        <div className='w-full sticky top-0'>
+      <div className='w-full bg-olive-100 justify-start flex-col flex-3 gap-2 overflow-hidden'>
+        <div className='w-full'>
           <TabButton
             selected={location.pathname.endsWith('events')}
             onClick={() => navigate('events')}>
@@ -98,14 +131,15 @@ export function ComponentScreen() {
             <span className='text-slate-500'>Tiedostot</span>
           </TabButton>
         </div>
-
-        <Outlet />
+        <ComponentProvider component={component}>
+          <Outlet />
+        </ComponentProvider>
       </div>
     </>
   );
 }
 
-function useComponent(id: string) {
+function useComponentScreen(id: string) {
   const { data: component, isLoading } = useQuery({
     queryKey: ['component', id],
     queryFn: async () => {

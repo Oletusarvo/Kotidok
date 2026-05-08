@@ -45,7 +45,7 @@ export function LoginScreen() {
           </Link>
         </div>
         {error ? (
-          status === 'auth:invalid-credentials' ? (
+          status === 'auth:credentials-invalid' ? (
             <ErrorHelperNotice>Virheelliset Tunnistautumistiedot!</ErrorHelperNotice>
           ) : (
             <ErrorHelperNotice>Tapahtui odottamaton virhe!</ErrorHelperNotice>
@@ -70,7 +70,7 @@ function useLogin() {
       }
       return await login(credentials as any);
     },
-    onSuccess: () => navigate('/auth/dashboard'),
+    onSuccess: () => navigate('/auth/properties'),
   });
   return { onSubmit, status, loading, success, error };
 }

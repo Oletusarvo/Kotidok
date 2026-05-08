@@ -10,6 +10,7 @@ export const tablenames = {
   component_type: createTableName('public', 'component_type'),
   event_data: createTableName('public', 'event_data'),
   event_transaction_data: createTableName('public', 'event_transaction_data'),
+  transaction_type: createTableName('public', 'event_transaction_type'),
   role_data: createTableName('public', 'component_user_role'),
   role_type: createTableName('public', 'component_role_type'),
   user_data: createTableName('public', 'user_data'),

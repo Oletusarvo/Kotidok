@@ -14,7 +14,7 @@ export function CreateComponentScreen() {
     <AppScreen
       onClose={() => navigate('/')}
       title='Luo Osa'>
-      <div className='flex-col w-full flex-1 gap-4 justify-center'>
+      <div className='flex-col w-full flex-1 gap-4 justify-center h-full'>
         <div className='flex-col w-full'>
           <Input
             onChange={e => {

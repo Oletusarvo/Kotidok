@@ -41,4 +41,7 @@ export enum ComponentType {
   ROOM = 'room',
   MATERIAL = 'material',
   STOVE = 'stove',
+  SAUNA = 'sauna',
+  HALLWAY = 'hallway',
+  DRAINAGE_DITCH = 'drainage_ditch',
 }

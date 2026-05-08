@@ -89,10 +89,16 @@ class ApiInterface {
   }
 
   /**Returns all children and grandchildren of a component by id. */
-  async getComponentChildren(componentId: string, name?: string) {
+  async getComponentChildren(componentId: string, name?: string, page?: number, limit?: number) {
+    const query = [];
+    if (name) query.push(`name=${name}`);
+    if (typeof page === 'number') query.push(`page=${page}`);
+    if (typeof limit === 'number') query.push(`limit=${limit}`);
+    const queryParams = query.join('&');
+
     const config = this.config.method('GET').credentialsInclude().get();
     return await fetch(
-      this.withApiPath('components', componentId, `children?name=${name}`),
+      this.withApiPath('components', componentId, `children?${queryParams}`),
       config,
     );
   }
@@ -102,6 +108,15 @@ class ApiInterface {
     const config = this.config.method('GET').credentialsInclude().get();
     return await fetch(
       this.withApiPath('components', componentId, `events?title=${title}`),
+      config,
+    );
+  }
+
+  /**Returns all event transactions for a component by id. */
+  async getComponentTransactions(componentId: string, queryStr?: string) {
+    const config = this.config.method('GET').credentialsInclude().get();
+    return await fetch(
+      this.withApiPath('components', componentId, `transactions?q=${queryStr}`),
       config,
     );
   }

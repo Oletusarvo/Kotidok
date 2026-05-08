@@ -1,25 +1,31 @@
-import { Plus } from 'lucide-react';
-import { AppScreen, AppSubScreen } from '../../../components/app-screen';
-import { Button } from '../../../components/button';
-import { SearchBar } from '../../../components/searchbar';
+import { Box } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiInterface } from '../../../utils/api-interface';
-import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '../../../components/spinner';
 import { ComponentCard } from '../components/component-card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { debounce } from '../../../utils/debounce';
 import { SearchableList } from '../../../components/searchable-list';
+import { ErrorScreen } from '../../../screens/error-screen';
+import { useInView } from 'react-intersection-observer';
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 
 export function ComponentChildrenScreen() {
   const { id } = useParams();
-  if (!id) {
-    throw new Error('The id of the component is required to view this route!');
-  }
   const [search, setSearch] = useState('');
-  const { components, isLoading } = useComponentChildren(id, search);
+  const { components, isLoading, fetchNextPage } = useComponentChildren(id!, search);
+  const { ref, inView } = useInView({ threshold: 0.5 });
+
+  useEffect(() => {
+    console.log('Is in view...');
+    if (inView && !isLoading) {
+      fetchNextPage();
+    }
+  }, [inView, isLoading]);
+
   const navigate = useNavigate();
   const runSearch = debounce(setSearch, 700);
+
   return (
     <SearchableList
       searchPlaceholder='Etsi jäsentä nimellä...'
@@ -29,29 +35,55 @@ export function ComponentChildrenScreen() {
         <div className='flex-col items-center justify-center flex-1'>
           <Spinner />
         </div>
-      ) : components.length > 0 ? (
-        components.map((c: any) => (
-          <ComponentCard
-            onClick={() => navigate(`/auth/components/${c.id}/children`)}
-            component={c}
-            key={c.id}
-          />
-        ))
+      ) : components && components.length > 0 ? (
+        <>
+          {components.map((c: any, i: number) => (
+            <ComponentCard
+              onClick={() => navigate(`/auth/components/${c.id}/children`)}
+              component={c}
+              key={c.id}
+            />
+          ))}
+          <div
+            ref={ref}
+            className='w-full items-center'>
+            {isLoading && <Spinner />}
+          </div>
+        </>
       ) : (
-        <span>Ei jäseniä.</span>
+        <ErrorScreen
+          title='Ei Jäseniä'
+          icon={<Box />}></ErrorScreen>
       )}
     </SearchableList>
   );
 }
 
 function useComponentChildren(componentId: string, name?: string) {
-  const { data: components, isLoading } = useQuery({
-    queryKey: ['component', componentId, 'children', name],
-    queryFn: async () => {
-      const res = await apiInterface.getComponentChildren(componentId, name);
-      return res.status === 200 ? await res.json() : [];
+  const {
+    data: components,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteScroll({
+    key: [componentId, 'children', name],
+    limit: 10,
+    fetchFn: async (page, limit) => {
+      const res = await apiInterface.getComponentChildren(
+        componentId,
+        name,
+        page, // page
+        limit, // limit
+      );
+      const data = res.status === 200 ? await res.json() : [];
+      return data;
     },
   });
 
-  return { components, isLoading };
+  return {
+    components,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+  };
 }
